@@ -1,0 +1,67 @@
+#!/usr/bin/env python
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Speaker (speaker.svg) by iconoci from The Noun Project
+
+
+import gobject
+import gtk
+import appindicator
+import subprocess
+import os
+
+thisDir = os.path.dirname(os.path.realpath(__file__));
+iconPath = thisDir + "/speaker.svg"
+descriptions = subprocess.Popen([thisDir + '/sound-output-switcher.sh', '-d'], stdout=subprocess.PIPE).communicate()[0]
+descriptions = descriptions[0:-1].split('\n')
+profiles = subprocess.Popen([thisDir + '/sound-output-switcher.sh', '-p'], stdout=subprocess.PIPE).communicate()[0]
+profiles = profiles[0:-1].split('\n')
+active = -1
+
+ 
+def menuCallback(w, i):
+  global active
+  if (i != active):
+    print "Activate profile " + profiles[i]
+    sp = subprocess.Popen(['pacmd', 'set-card-profile 0 output:' + profiles[i]], stdout=subprocess.PIPE).communicate()[0]
+    print sp
+    #subprocess.Popen(['notify-send', "Play sound through: " + descriptions[i]])
+    active = i
+
+ 
+if __name__ == "__main__":
+  thisDir = os.path.dirname(os.path.realpath(__file__));
+  ind = appindicator.Indicator("sound-output-switcher",
+                              iconPath,
+                              appindicator.CATEGORY_HARDWARE)
+  ind.set_status(appindicator.STATUS_ACTIVE)
+  #ind.set_attention_icon("indicator-messages-new")
+ 
+  # create a menu
+  menu = gtk.Menu()
+  group = gtk.RadioMenuItem()
+  for i, d in enumerate(descriptions):
+    menuItem = gtk.RadioMenuItem(group, d)
+    menu.append(menuItem)
+    # this is where you would connect your menu item up with a function:
+    menuItem.connect("activate", menuCallback, i)
+    # show the items
+    menuItem.show()
+    if (i == 0):
+      menuItem.activate()
+ 
+  ind.set_menu(menu)
+ 
+  gtk.main()
