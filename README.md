@@ -1,12 +1,12 @@
 sound-output-switcher
 =====================
 
-ABOUT
+#### ABOUT
 
-This is an indicator applet for the Ubuntu Unity desktop to switch the sound output. It shows all available profiles of your soundcard and lets you switch between them. 
+This is an indicator applet for the Ubuntu Unity / Gnome shell desktops to switch the sound output. It shows all available profiles of your soundcard and lets you switch between them. 
 
-Tested on Ubuntu 12.04 and 14.04. Feedback is welcome.
+Tested on Ubuntu 12.04 and 14.04, and on Gnome 3.4.2 - Feedback is welcome.
 
-INSTALL
+#### INSTALL
 
 Put all files in a directory of your choice. Run the executable sound-output-switcher or add it to your startup applications.
